@@ -1,3 +1,50 @@
 /*============================================================================================*/
 /* Your custom styles below */
 /*============================================================================================*/
+
+/* Stack the accordion above the wizard inside the same column */
+#wizard_container > .accordion {
+    width: 100%;
+}
+
+#wizard_container .accordion-button {
+    font-weight: 600;
+}
+
+/* Mobile tuning for the registration form */
+@media (max-width: 767px) {
+    .container.full-height > .row.m-5 {
+        margin: 1.25rem 0 0.5rem 0 !important;
+    }
+
+    #form_title h3 {
+        font-size: 1.35rem;
+        line-height: 1.25;
+    }
+
+    #form_title p {
+        font-size: 0.9rem;
+    }
+
+    .content-right {
+        padding: 15px 12px !important;
+        align-items: flex-start !important;
+    }
+
+    #wizard_container {
+        margin: 0 !important;
+    }
+
+    h3.main_question {
+        font-size: 1rem;
+    }
+
+    .form-group .form-control {
+        font-size: 16px; /* prevent iOS zoom-on-focus */
+    }
+
+    #bottom-wizard button {
+        min-height: 44px;
+        padding: 10px 18px;
+    }
+}
