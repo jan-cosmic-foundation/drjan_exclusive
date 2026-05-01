@@ -200,7 +200,7 @@
                                     <tr>
                                         <td><strong>GHS 480</strong></td>
                                         <td>Suite (One Standard Room with Hall)</td>
-                                        <td>4 rooms</td>
+                                        <td>3 rooms</td>
                                         <td>Queen size bed/sofa, air condition/fan, TV, fridge, water heater, working desk</td>
                                     </tr>
                                     </tbody>
@@ -588,6 +588,26 @@
                                 <input type="date" name="arrivalDate" class="form-control date"
                                        placeholder="Arrival Date">
                             </div>
+                            <div class="mt-4">
+                                <h3 class="main_question">Are you coming with children?</h3>
+                            </div>
+                            <div class="form-group">
+                                <label class="container_radio version_2">No
+                                    <input type="radio" name="comingWithChildren" value="No" class="required">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="container_radio version_2">Yes
+                                    <input type="radio" name="comingWithChildren" value="Yes" class="required">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label for="childrenCount">If yes, how many children?</label>
+                                <input id="childrenCount" type="number" name="childrenCount" class="form-control"
+                                       min="0" step="1" placeholder="Number of children">
+                            </div>
 
 
                         </div>
@@ -597,51 +617,51 @@
                                 key roles.
                                 Please select the role you would like to support with, and we will be in touch.</h3>
                             <div class="form-group">
-                                <label class="container_radio version_2">First Aid Team (you should have some medical
+                                <label class="container_check version_2">First Aid Team (you should have some medical
                                     background)
-                                    <input type="radio" name="volunteering" value="First Aid Team">
+                                    <input type="checkbox" name="volunteering" value="First Aid Team">
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
                             <div class="form-group">
-                                <label class="container_radio version_2">Ushers
-                                    <input type="radio" name="volunteering" value="Ushers">
+                                <label class="container_check version_2">Ushers
+                                    <input type="checkbox" name="volunteering" value="Ushers">
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
                             <div class="form-group">
-                                <label class="container_radio version_2">Registrations and information
-                                    <input type="radio" name="volunteering" value="Registrations and information">
+                                <label class="container_check version_2">Registrations and information
+                                    <input type="checkbox" name="volunteering" value="Registrations and information">
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
                             <div class="form-group">
-                                <label class="container_radio version_2">Kitchen support
-                                    <input type="radio" name="volunteering" value="Kitchen support">
+                                <label class="container_check version_2">Kitchen support
+                                    <input type="checkbox" name="volunteering" value="Kitchen support">
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
                             <div class="form-group">
-                                <label class="container_radio version_2">Auditorium daily setup
-                                    <input type="radio" name="volunteering" value="Auditorium daily setup">
+                                <label class="container_check version_2">Auditorium daily setup
+                                    <input type="checkbox" name="volunteering" value="Auditorium daily setup">
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
                             <div class="form-group">
-                                <label class="container_radio version_2">Social activities
-                                    <input type="radio" name="volunteering" value="Social activities">
+                                <label class="container_check version_2">Social activities
+                                    <input type="checkbox" name="volunteering" value="Social activities">
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
                             <div class="form-group">
-                                <label class="container_radio version_2">Safety coordinators
-                                    <input type="radio" name="volunteering" value="Safety coordinators">
+                                <label class="container_check version_2">Safety coordinators
+                                    <input type="checkbox" name="volunteering" value="Safety coordinators">
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
                             <div class="form-group">
-                                <label class="container_radio version_2">Cannot volunteer
-                                    <input type="radio" name="volunteering" value="Cannot volunteer">
+                                <label class="container_check version_2">Cannot volunteer
+                                    <input type="checkbox" name="volunteering" value="Cannot volunteer">
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
@@ -730,6 +750,19 @@
     function submitForm() {
         document.getElementById("wrapped").submit();
     }
+
+    document.querySelectorAll('input[name="volunteering"]').forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            var cannotVolunteer = document.querySelector('input[name="volunteering"][value="Cannot volunteer"]');
+            if (this.value === 'Cannot volunteer' && this.checked) {
+                document.querySelectorAll('input[name="volunteering"]:not([value="Cannot volunteer"])').forEach(function (option) {
+                    option.checked = false;
+                });
+            } else if (this.checked && cannotVolunteer) {
+                cannotVolunteer.checked = false;
+            }
+        });
+    });
 </script>
 
 </body>

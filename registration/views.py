@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
+from django.db.models import Sum
 from .models import Participant, Child, Donation
 import random
 import string
@@ -40,7 +41,9 @@ def index(request):
         spouse_or_child = data.get('spouseOrChild')
         accommodation = data.get('accommodation')
         arrival_date = data.get('arrivalDate')
-        volunteering = data.get('volunteering')
+        volunteering = ', '.join(data.getlist('volunteering'))
+        coming_with_children = data.get('comingWithChildren')
+        children_count = data.get('childrenCount')
         comments = data.get('comments')
 
         # generate payment reference
@@ -51,6 +54,12 @@ def index(request):
 
         # Convert arrival date string to date object
         arrival_date = datetime.strptime(arrival_date, '%Y-%m-%d').date() if arrival_date else None
+        try:
+            children_count = max(0, int(children_count)) if children_count else 0
+        except (TypeError, ValueError):
+            children_count = 0
+        if coming_with_children != 'Yes':
+            children_count = 0
 
         participant = Participant.objects.create(
             first_name=firstname,
@@ -67,6 +76,8 @@ def index(request):
             accommodation=accommodation,
             arrival_date=arrival_date,
             volunteering=volunteering,
+            coming_with_children=coming_with_children,
+            children_count=children_count,
             comments=comments,
             region=region,
             transport=transport,
@@ -95,8 +106,7 @@ def analytics(request):
     participants = Participant.objects.all()
     total = participants.count()
 
-    children = Child.objects.all()
-    total_children = children.count()
+    total_children = Child.objects.count() + (participants.aggregate(total=Sum('children_count'))['total'] or 0)
 
     q_3 = participants.filter(question_3='Yes')
     total_gen7 = q_3.count()
@@ -105,7 +115,7 @@ def analytics(request):
         if p.spouse_name:
             total_gen7 += 1
 
-        total_gen7 += p.children.count()
+        total_gen7 += p.children.count() + p.children_count
 
     # number of participants not in ghana
     p_not_ghana = 0
@@ -209,4 +219,3 @@ class ConfirmPaymentView(View):
 
         print(context)
         return render(request, self.template_name, context)
-
