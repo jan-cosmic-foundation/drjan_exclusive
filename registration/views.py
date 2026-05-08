@@ -13,6 +13,7 @@ import random
 import string
 
 REGISTRATION_FEE = 400
+RETREAT_DAYS = 10
 
 
 def get_accommodation_price(accommodation):
@@ -103,9 +104,11 @@ def index(request):
             "email": email,
             "name": f"{firstname} {lastname}".strip(),
             "registration_fee": REGISTRATION_FEE,
+            "retreat_days": RETREAT_DAYS,
             "accommodation": accommodation,
             "accommodation_price": accommodation_price,
-            "registration_with_accommodation": REGISTRATION_FEE + accommodation_price,
+            "accommodation_total": accommodation_price * RETREAT_DAYS,
+            "registration_with_accommodation": REGISTRATION_FEE + (accommodation_price * RETREAT_DAYS),
         }
 
         return render(request, 'registration/payment.html', payment_context)
