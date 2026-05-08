@@ -1,8 +1,9 @@
 import json
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 
 import requests
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -32,6 +33,40 @@ def get_accommodation_price(accommodation):
         return int(accommodation.split()[1])
     except (IndexError, ValueError):
         return 0
+
+
+def get_checkout_amount(project, requested_amount, reference):
+    if project == 'retreat-registration':
+        return REGISTRATION_FEE
+
+    if project == 'retreat-registration-accommodation':
+        try:
+            participant = Participant.objects.get(payment_reference=reference)
+        except Participant.DoesNotExist:
+            return None
+
+        accommodation_price = get_accommodation_price(participant.accommodation)
+        if not accommodation_price:
+            return None
+
+        return REGISTRATION_FEE + (accommodation_price * RETREAT_DAYS)
+
+    if project and project.startswith('retreat-accommodation-'):
+        try:
+            daily_rate = int(project.rsplit('-', 1)[1])
+        except (IndexError, ValueError):
+            return None
+
+        valid_rates = [option["daily_rate"] for option in ACCOMMODATION_OPTIONS]
+        if daily_rate not in valid_rates:
+            return None
+
+        return daily_rate * RETREAT_DAYS
+
+    try:
+        return Decimal(str(requested_amount))
+    except (InvalidOperation, TypeError, ValueError):
+        return None
 
 
 def register(request):
@@ -184,6 +219,9 @@ class CheckoutView(View):
         project = request.GET.get('project')
 
         reference = generate_payment_reference() if not reference else reference
+        amount = get_checkout_amount(project, amount, reference)
+        if amount is None:
+            return HttpResponseBadRequest("Invalid payment amount.")
 
         # create donation record
         Donation.objects.create(
@@ -191,7 +229,7 @@ class CheckoutView(View):
             email=email,
             reference=reference,
             project=project,
-            amount=float(amount),
+            amount=amount,
         )
 
         # # get participant email

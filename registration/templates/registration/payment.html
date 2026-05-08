@@ -157,26 +157,28 @@
                                 </td>
                             </tr>
                         {% endif %}
-                        <tr>
-                            <td>
-                                <h6>Accommodation Only</h6>
-                                <p class="mb-2">Select an accommodation option. Rates are per day for {{ retreat_days|default:10 }} days.</p>
-                                <select id="accommodationSelect" class="form-control">
-                                    <option value="">Select accommodation</option>
-                                    {% for option in accommodation_options %}
-                                        <option value="{{ option.daily_rate }}" data-label="{{ option.label }}">
-                                            {{ option.label }} - GHS {{ option.daily_rate }} x {{ retreat_days|default:10 }} days
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                <p id="accommodationTotalText" class="mt-2 mb-0"></p>
-                            </td>
-                            <td>
-                                <p><a id="accommodationPayButton" class="btn_1 support-button" href="#"
-                                      data-project-name="retreat-accommodation" data-amount=""
-                                      data-bs-toggle="modal" data-bs-target="#terms-txt">Pay</a></p>
-                            </td>
-                        </tr>
+                        {% if not reference %}
+                            <tr>
+                                <td>
+                                    <h6>Accommodation Only</h6>
+                                    <p class="mb-2">Select an accommodation option. Rates are per day for {{ retreat_days|default:10 }} days.</p>
+                                    <select id="accommodationSelect" class="form-control">
+                                        <option value="">Select accommodation</option>
+                                        {% for option in accommodation_options %}
+                                            <option value="{{ option.daily_rate }}" data-label="{{ option.label }}">
+                                                {{ option.label }} - GHS {{ option.daily_rate }} x {{ retreat_days|default:10 }} days
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    <p id="accommodationTotalText" class="mt-2 mb-0"></p>
+                                </td>
+                                <td>
+                                    <p><a id="accommodationPayButton" class="btn_1 support-button" href="#"
+                                          data-project-name="retreat-accommodation" data-amount=""
+                                          data-bs-toggle="modal" data-bs-target="#terms-txt">Pay</a></p>
+                                </td>
+                            </tr>
+                        {% endif %}
                         <tr>
                             <td>
                                 <h6>International Training and Retreat Donation</h6>
@@ -465,7 +467,7 @@
         var projectName = event.target.getAttribute('data-project-name');
         var projectAmount = event.target.getAttribute('data-amount');
         var paymentReference = event.target.getAttribute('data-reference') || '';
-        if (!projectAmount) {
+        if (projectName === 'retreat-accommodation' && !projectAmount) {
             event.preventDefault();
             event.stopImmediatePropagation();
             alert('Please select an accommodation option first.');
@@ -479,6 +481,7 @@
 
         var donationAmount = document.getElementById('donationAmount');
         donationAmount.value = projectAmount;
+        donationAmount.readOnly = projectName !== 'retreat';
 
         var referenceInput = document.getElementById('referenceInput');
         referenceInput.value = paymentReference;
