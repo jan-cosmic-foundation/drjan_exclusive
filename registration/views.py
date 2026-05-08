@@ -12,6 +12,18 @@ from .models import Participant, Child, Donation
 import random
 import string
 
+REGISTRATION_FEE = 400
+
+
+def get_accommodation_price(accommodation):
+    if not accommodation or not accommodation.startswith('GHS '):
+        return 0
+
+    try:
+        return int(accommodation.split()[1])
+    except (IndexError, ValueError):
+        return 0
+
 
 def register(request):
     return render(request, 'registration/index.html')
@@ -85,8 +97,15 @@ def index(request):
             payment_reference=payment_reference
         )
 
+        accommodation_price = get_accommodation_price(accommodation)
         payment_context = {
             "reference": payment_reference,
+            "email": email,
+            "name": f"{firstname} {lastname}".strip(),
+            "registration_fee": REGISTRATION_FEE,
+            "accommodation": accommodation,
+            "accommodation_price": accommodation_price,
+            "registration_with_accommodation": REGISTRATION_FEE + accommodation_price,
         }
 
         return render(request, 'registration/payment.html', payment_context)

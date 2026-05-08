@@ -138,10 +138,25 @@
                                     Accommodation is not included.</p>
                             </td>
                             <td>
-                                <p><a class="btn_1 support-button" href="#" data-project-name="retreat" data-amount="400"
+                                <p><a class="btn_1 support-button" href="#" data-project-name="retreat-registration"
+                                      data-amount="{{ registration_fee|default:400 }}" data-reference="{{ reference|default:'' }}"
                                       data-bs-toggle="modal" data-bs-target="#terms-txt">Pay</a></p>
                             </td>
                         </tr>
+                        {% if accommodation_price %}
+                            <tr>
+                                <td>
+                                    <h6>Registration + Accommodation</h6>
+                                    <p>{{ accommodation }}: GHS {{ accommodation_price }}. Total: GHS {{ registration_with_accommodation }}.</p>
+                                </td>
+                                <td>
+                                    <p><a class="btn_1 support-button" href="#" data-project-name="retreat-registration-accommodation"
+                                          data-amount="{{ registration_with_accommodation }}" data-reference="{{ reference|default:'' }}"
+                                          data-bs-toggle="modal"
+                                          data-bs-target="#terms-txt">Pay</a></p>
+                                </td>
+                            </tr>
+                        {% endif %}
                         <tr>
                             <td>
                                 <h6>International Training and Retreat Donation</h6>
@@ -332,11 +347,12 @@
                         <input type="number" id="donationAmount" class="form-control" name="amount" placeholder="Amount (GH₵)" required>
                     </div>
                     <div class="form-group">
-                        <input type="email" class="form-control" name="email" placeholder="Email" required>
+                        <input type="email" class="form-control" name="email" placeholder="Email" value="{{ email|default:'' }}" required>
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-control" name="name" placeholder="Full Name">
+                        <input type="text" class="form-control" name="name" placeholder="Full Name" value="{{ name|default:'' }}">
                     </div>
+                    <input id="referenceInput" type="hidden" name="reference" value="">
                     <input id="projectInput" type="hidden" name="project" value="retreat">
                     <!-- add two buttons for online payment and manual payment -->
                     <button type="submit" class="btn_1">Pay Online</button>
@@ -428,6 +444,7 @@
         // Retrieve necessary data from data attributes
         var projectName = event.target.getAttribute('data-project-name');
         var projectAmount = event.target.getAttribute('data-amount');
+        var paymentReference = event.target.getAttribute('data-reference') || '';
         console.log("Project name:", projectName);
 
         // find the input field and set the value
@@ -436,6 +453,9 @@
 
         var donationAmount = document.getElementById('donationAmount');
         donationAmount.value = projectAmount;
+
+        var referenceInput = document.getElementById('referenceInput');
+        referenceInput.value = paymentReference;
 
         // // Open the modal
         // var modal = new bootstrap.Modal(document.getElementById('terms-txt'));
