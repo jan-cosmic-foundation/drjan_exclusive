@@ -147,7 +147,7 @@
                             <tr>
                                 <td>
                                     <h6>Registration + Accommodation</h6>
-                                    <p>{{ accommodation }}: GHS {{ accommodation_price }} per day × {{ retreat_days }} days = GHS {{ accommodation_total }}. Total with registration: GHS {{ registration_with_accommodation }}.</p>
+                                    <p>{{ accommodation }}: GHS {{ accommodation_price }} per day x {{ retreat_days }} days = GHS {{ accommodation_total }}. Total with registration: GHS {{ registration_with_accommodation }}.</p>
                                 </td>
                                 <td>
                                     <p><a class="btn_1 support-button" href="#" data-project-name="retreat-registration-accommodation"
@@ -157,6 +157,26 @@
                                 </td>
                             </tr>
                         {% endif %}
+                        <tr>
+                            <td>
+                                <h6>Accommodation Only</h6>
+                                <p class="mb-2">Select an accommodation option. Rates are per day for {{ retreat_days|default:10 }} days.</p>
+                                <select id="accommodationSelect" class="form-control">
+                                    <option value="">Select accommodation</option>
+                                    {% for option in accommodation_options %}
+                                        <option value="{{ option.daily_rate }}" data-label="{{ option.label }}">
+                                            {{ option.label }} - GHS {{ option.daily_rate }} x {{ retreat_days|default:10 }} days
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <p id="accommodationTotalText" class="mt-2 mb-0"></p>
+                            </td>
+                            <td>
+                                <p><a id="accommodationPayButton" class="btn_1 support-button" href="#"
+                                      data-project-name="retreat-accommodation" data-amount=""
+                                      data-bs-toggle="modal" data-bs-target="#terms-txt">Pay</a></p>
+                            </td>
+                        </tr>
                         <tr>
                             <td>
                                 <h6>International Training and Retreat Donation</h6>
@@ -445,6 +465,12 @@
         var projectName = event.target.getAttribute('data-project-name');
         var projectAmount = event.target.getAttribute('data-amount');
         var paymentReference = event.target.getAttribute('data-reference') || '';
+        if (!projectAmount) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            alert('Please select an accommodation option first.');
+            return;
+        }
         console.log("Project name:", projectName);
 
         // find the input field and set the value
@@ -467,6 +493,31 @@
     supportButtons.forEach(function (button) {
         button.addEventListener('click', handleSupportButtonClick);
     });
+
+    var accommodationSelect = document.getElementById('accommodationSelect');
+    var accommodationPayButton = document.getElementById('accommodationPayButton');
+    var accommodationTotalText = document.getElementById('accommodationTotalText');
+    var retreatDays = Number('{{ retreat_days|default:10 }}');
+
+    if (accommodationSelect && accommodationPayButton && accommodationTotalText) {
+        accommodationSelect.addEventListener('change', function () {
+            var dailyRate = Number(accommodationSelect.value);
+            var selectedOption = accommodationSelect.options[accommodationSelect.selectedIndex];
+
+            if (!dailyRate) {
+                accommodationPayButton.setAttribute('data-amount', '');
+                accommodationPayButton.setAttribute('data-project-name', 'retreat-accommodation');
+                accommodationTotalText.textContent = '';
+                return;
+            }
+
+            var total = dailyRate * retreatDays;
+            var label = selectedOption.getAttribute('data-label');
+            accommodationPayButton.setAttribute('data-amount', total);
+            accommodationPayButton.setAttribute('data-project-name', 'retreat-accommodation-' + dailyRate);
+            accommodationTotalText.textContent = label + ': GHS ' + dailyRate + ' per day x ' + retreatDays + ' days = GHS ' + total + '.';
+        });
+    }
 </script>
 
 <!-- COMMON SCRIPTS -->

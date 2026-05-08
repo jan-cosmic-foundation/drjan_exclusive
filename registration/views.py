@@ -14,6 +14,14 @@ import string
 
 REGISTRATION_FEE = 400
 RETREAT_DAYS = 10
+ACCOMMODATION_OPTIONS = [
+    {"label": "GHS 120 per day - Single Room", "daily_rate": 120},
+    {"label": "GHS 150 per day - Single Room", "daily_rate": 150},
+    {"label": "GHS 200 per day - Single Room", "daily_rate": 200},
+    {"label": "GHS 280 per day - Standard Room", "daily_rate": 280},
+    {"label": "GHS 380 per day - Executive Room", "daily_rate": 380},
+    {"label": "GHS 480 per day - Suite", "daily_rate": 480},
+]
 
 
 def get_accommodation_price(accommodation):
@@ -105,6 +113,7 @@ def index(request):
             "name": f"{firstname} {lastname}".strip(),
             "registration_fee": REGISTRATION_FEE,
             "retreat_days": RETREAT_DAYS,
+            "accommodation_options": ACCOMMODATION_OPTIONS,
             "accommodation": accommodation,
             "accommodation_price": accommodation_price,
             "accommodation_total": accommodation_price * RETREAT_DAYS,
@@ -116,7 +125,10 @@ def index(request):
 
 
 def payment(request):
-    context = {}
+    context = {
+        "retreat_days": RETREAT_DAYS,
+        "accommodation_options": ACCOMMODATION_OPTIONS,
+    }
     if request.GET:
         support = request.GET.get('supportTo')
 
