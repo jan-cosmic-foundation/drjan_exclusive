@@ -250,6 +250,32 @@ class ConfirmPaymentView(View):
             d = Donation.objects.get(reference=reference)
             d.paid = True
             d.save()
+            context['project'] = d.project
+
+            if d.project == 'retreat-registration':
+                context['payment_title'] = 'Registration Payment Successful! ✅'
+                context['payment_message'] = 'Thank you for completing your retreat registration payment.'
+                context['support_heading'] = 'Support the Program'
+                context['support_message'] = 'Use the button below if you would like to make an additional donation to the foundation.'
+                context['support_button_text'] = 'Donate'
+            elif d.project == 'retreat-registration-accommodation':
+                context['payment_title'] = 'Registration and Accommodation Payment Successful! ✅'
+                context['payment_message'] = 'Thank you for completing your retreat registration and accommodation payment.'
+                context['support_heading'] = 'Support the Program'
+                context['support_message'] = 'Use the button below if you would like to make an additional donation to the foundation.'
+                context['support_button_text'] = 'Donate'
+            elif d.project and d.project.startswith('retreat-accommodation'):
+                context['payment_title'] = 'Accommodation Payment Successful! ✅'
+                context['payment_message'] = 'Thank you for completing your retreat accommodation payment.'
+                context['support_heading'] = 'Support the Program'
+                context['support_message'] = 'Use the button below if you would like to make an additional donation to the foundation.'
+                context['support_button_text'] = 'Donate'
+            else:
+                context['payment_title'] = 'Donation Successful! ✅'
+                context['payment_message'] = "Thank you for your generous donation! Your support means the world to us and helps make a real difference. We couldn't do it without you."
+                context['support_heading'] = 'Support Another Program'
+                context['support_message'] = 'Use the button below to donate again to the foundation.'
+                context['support_button_text'] = 'Donate Again'
 
         print(context)
         return render(request, self.template_name, context)

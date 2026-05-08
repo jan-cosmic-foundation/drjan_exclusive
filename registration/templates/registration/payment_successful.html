@@ -96,8 +96,8 @@
 				</div>
 				<!-- /logo -->
 				<div id="form_title">
-					<h3 class="text-uppercase mt-3">Donation Successful! ✅</h3>
-					<p>Thank you for your generous donation! Your support means the world to us and helps make a real difference. We couldn't do it without you. 🙏</p>
+					<h3 class="text-uppercase mt-3">{{ payment_title|default:"Payment Successful! ✅" }}</h3>
+					<p>{{ payment_message|default:"Thank you. Your payment has been received successfully." }}</p>
 					<p>Receipt will be sent to your email.</p>
 				</div>
 				<!-- /form_title -->
@@ -115,17 +115,17 @@
 				<div class="col-12 text-center">
 					<h5>Whatsapp Group</h5>
 					<p>
-						Use the link below to join the Whatsapp Group for the 2025 Event 👇.
+						Use the link below to join the Whatsapp Group for the 2026 Event.
 					</p>
-					<a href="https://chat.whatsapp.com/FPWp3IPwqBl2jjjPgPip6M" class="btn_1">Join Group</a>
+					<a href="https://chat.whatsapp.com/KltD0frJS2p2KdhCX8eIpC?mode=gi_t" class="btn_1">Join Group</a>
 				</div>
 
 				<div class="col-12 text-center mt-4">
-					<h5>Support Another Program</h5>
+					<h5>{{ support_heading|default:"Support Another Program" }}</h5>
 					<p>
-						Use the button below to donate again to the foundation 🕊️🕊️.
+						{{ support_message|default:"Use the button below to donate again to the foundation." }}
 					</p>
-					<a href="/event-registration/donation/" class="btn_1">Donate Again</a>
+					<a href="/event-registration/donation/" class="btn_1">{{ support_button_text|default:"Donate Again" }}</a>
 				</div>
 
 			</div>
